@@ -1,0 +1,30 @@
+{
+  "name": "Medical Consultation Transcripts",
+  "version": "1.0.0",
+  "description": "App for recording transcripts of doctor-patient consultations",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jest test/e2e.test.js",
+    "start": "npx http-server -c-1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^0.12.3",
+    "standard": "^16.0.3"
+  },
+  "devDependencies": {
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-standard": "^5.0.0",
+    "jest": "^26.6.3",
+    "jest-puppeteer": "^3.5.1",
+    "puppeteer-core": "^8.0.0"
+  },
+  "jest": {
+    "preset": "jest-puppeteer"
+  }
+}
