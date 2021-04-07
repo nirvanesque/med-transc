@@ -1,10 +1,6 @@
 # PWA Advanced features application
 
-## For a video demo see [here](https://youtu.be/Tdou1iXT7Xs)
-
-## Why:
-
-We want to understand what native features in an application can be ported over to a PWA.
+Simple PWA for facilitating transcription of Doctor-Patient consultations.
 
 The targeted features for this are:
  - Camera access + taking pictures
@@ -28,7 +24,7 @@ The only requirement for `npm` and npm scripts in our case is for starting up an
 
 ### Running locally:
 ```bash
-git clone git@github.com:nearform/pwa-poc.git
+git clone git@github.com:nirvanesque/med-transc.git
 cd pwa-poc
 npm i
 npm start
@@ -109,10 +105,10 @@ This API has [fairly wide spread adoption](https://caniuse.com/#search=geolocati
 
 
 ## Stage 3
-### Other PWA Case studies:
+### REX from other PWA Case studies:
 
 #### 1) Pinterest:
-Pinterest has a PWA and the way they do the accessing a deep link to the APP that will share the link. It doesn't work with binary content.
+Pinterest has a PWA and the way they do the accessing a deep link to the APP that will share the link. It does not work with binary content.
 
 `Eg:`
 ```html
