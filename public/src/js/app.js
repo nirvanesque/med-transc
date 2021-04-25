@@ -1,8 +1,8 @@
-let snapshotButton = document.querySelector('#capture-button')
+// let snapshotButton = document.querySelector('#capture-button')
 let locationBtn = document.querySelector('#location-btn')
-let canvasElement = document.querySelector('#canvas')
-let videoPlayer = document.querySelector('#player')
-let imagePickerArea = document.querySelector('#pick-image')
+// let canvasElement = document.querySelector('#canvas')
+// let videoPlayer = document.querySelector('#player')
+// let imagePickerArea = document.querySelector('#pick-image')
 let shareButton = document.querySelector('#share-button')
 let flipCameraButton = document.querySelector('#flip-camera-button')
 let scanQRCode = document.querySelector('#qr-code-button')
@@ -28,8 +28,8 @@ const defaultConstraints = { video: { facingMode: (front ? 'user' : 'environment
 // constraint object to specify default values for camera orientation
 
 const init = (constraints = defaultConstraints) => {
-  canvasElement.style.display = 'none'
-  imagePickerArea.style.display = 'none'
+  // canvasElement.style.display = 'none'
+  // imagePickerArea.style.display = 'none'
   retryBtn.style.display = 'none'
   initializeMedia(constraints)
   initializeLocation()
@@ -69,53 +69,53 @@ const initializeMedia = (constraints) => {
     .then(() =>
       navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {
-          videoPlayer.srcObject = stream
-          videoPlayer.style.display = 'block'
+          // videoPlayer.srcObject = stream
+          // videoPlayer.style.display = 'block'
         })
         .catch(err => {
           console.error(err)
-          imagePickerArea.style.display = 'block'
+          // imagePickerArea.style.display = 'block'
         })
     )
 }
 
 const showButtons = () => {
-  snapshotButton.style.display = 'inline'
+  // snapshotButton.style.display = 'inline'
   qrCodeBtn.style.display = 'inline'
   retryBtn.style.display = 'none'
 }
 
 const hideButtons = () => {
-  videoPlayer.style.display = 'none'
-  snapshotButton.style.display = 'none'
+  // videoPlayer.style.display = 'none'
+  // snapshotButton.style.display = 'none'
   qrCodeBtn.style.display = 'none'
-  canvasElement.style.display = 'block'
+  // canvasElement.style.display = 'block'
   retryBtn.style.display = 'inline'
 }
-
+/*
 const freezeFrame = () => {
-  let context = canvasElement.getContext('2d')
+  let context; // = canvasElement.getContext('2d')
   context.drawImage(videoPlayer, 0, 0, window.canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / window.canvas.width))
   videoPlayer.srcObject.getVideoTracks().forEach(track => {
     track.stop()
   })
   return context
 }
-
+*/
 const clearPicture = () => {
   const constraints = { video: { facingMode: (front ? 'user' : 'environment') } }
   init(constraints)
 }
-
+/*
 const snapshotHandler = event => {
   hideButtons()
   freezeFrame()
   return dataURItoBlob(canvasElement.toDataURL('image/webp'))
 }
-
+*/
 const scanQRCodeHandler = event => {
   hideButtons()
-  const context = freezeFrame()
+  // const context = freezeFrame()
   const currentImage = context.getImageData(0, 0, window.canvas.width, window.canvas.height)
   // eslint-disable-next-line new-cap
   const qrCode = new window.jsQR(currentImage.data, currentImage.width, currentImage.height)
@@ -172,7 +172,7 @@ const retryHandler = event => {
 retryBtn.addEventListener('click', retryHandler)
 scanQRCode.addEventListener('click', scanQRCodeHandler)
 shareButton.addEventListener('click', shareHandler)
-snapshotButton.addEventListener('click', snapshotHandler)
+// snapshotButton.addEventListener('click', snapshotHandler)
 flipCameraButton.addEventListener('click', flipCameraHandler)
 locationBtn.addEventListener('click', getLocationHandler)
 init()

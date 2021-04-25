@@ -25,9 +25,11 @@ The only requirement for `npm` and npm scripts in our case is for starting up an
 ### Running locally:
 ```bash
 git clone git@github.com:nirvanesque/med-transc.git
-cd pwa-poc
-npm i
-npm start
+cd med-transc
+npm install
+export GOOGLE_APPLICATION_CREDENTIALS="/path/of/google/credentials/file.json"
+npm --PROJECT_ID=<google-project-id> run start
+npx http-server -c-1
 ```
 
 You will have an `HTTP` server running locally and over the `LAN` however for the page to work on the device fully it should be served over `HTTPS`.

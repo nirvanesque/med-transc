@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Medical Transcripts</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="/src/css/app.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Medical Transcripts">
+    <meta name="msapplication-TileImage" content="/src/icons/app-icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#fff">
+    <meta name="theme-color" content="#3f51b5">
+    <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io-stream/0.9.1/socket.io-stream.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header mdl-layout__header__nopadding">
+        <div class="mdl-layout__header-row mdl-layout__header-row__flex">
+          <span class="mdl-layout-title mdl-layout-title__centered">Medical Transcripts</span>
+        </div>
+      </header>
+      <main class="mdl-layout__content mat-typography mld-layout__flex">
+        <div align="center">
+          <button id="start-recording" disabled>Record</button>
+          <button id="stop-recording" disabled>Stop</button>
+        </div>
+        <p align="center">Transcript in Bengali:</p>
+        <center><textarea id="results" cols="40" rows="15"></textarea></center>
+        <p align="center">Translation in English:</p>
+        <center><textarea id="translated" cols="40" rows="15"></textarea></center>
+        <!--
+        <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="output-wrapper">
+          <input class="mdl-textfield__input" type="text" id="translated">
+        </div>
+        <video id="player" autoplay playsinline width="290" height="400" class="media__video"></video>
+        <canvas id="canvas" width="290" height="400" class="media__picture"></canvas>
+        <div id="pick-image">
+          <h6>Pick an Image instead</h6>
+          <input type="file" accept="image/*" id="image-picker">
+        </div>
+        <div class="floating-button floating-button__centered">
+          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mld-button__centered"
+                  id="capture-button">
+            <i class="material-icons">add_a_photo</i>
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-color--blue-600 mld-button__centered"
+                  id="share-button">
+            <i class="material-icons">share</i>
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-color--purple-A700 mld-button__centered"
+                  id="flip-camera-button">
+            <i class="material-icons">loop</i>
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-color--grey-800 mld-button__centered"
+                  id="qr-code-button">
+            <i class="material-icons">center_focus_weak</i>
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-color--green-A700 mld-button__centered"
+                  id="location-btn">
+            <i class="material-icons">gps_fixed</i>
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-color--orange-900 mld-button__centered"
+                  id="retry-btn">
+            <i class="material-icons">settings_backup_restore</i>
+          </button>
+        </div>
+        -->
+      </main>
+    </div>
+  </div>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js.map"></script>
+  <script src="/src/js/app.js"></script>
+  <script src="/src/js/jsQR.js"></script>
+  <script type="text/javascript">
+    const startRecording = document.getElementById('start-recording');
+    const stopRecording = document.getElementById('stop-recording');
+    let recordAudio;
+
+    const socketio = io();
+    const socket = socketio.on('connect', function() {
+        startRecording.disabled = false;
+    });
+
+    startRecording.onclick = function() {
+        startRecording.disabled = true;
+
+        navigator.getUserMedia({
+            audio: true
+        }, function(stream) {
+                recordAudio = RecordRTC(stream, {
+                type: 'audio',
+                mimeType: 'audio/webm',
+                sampleRate: 44100,
+                desiredSampRate: 16000,
+                
+                recorderType: StereoAudioRecorder,
+                numberOfAudioChannels: 1,
+
+
+                //1)
+                // get intervals based blobs
+                // value in milliseconds
+                // as you might not want to make detect calls every seconds
+                timeSlice: 4000,
+
+                //2)
+                // as soon as the stream is available
+                ondataavailable: function(blob) {
+                    console.log('here');
+                    // 3
+                    // making use of socket.io-stream for bi-directional
+                    // streaming, create a stream
+                    var stream = ss.createStream();
+                    // stream directly to server
+                    // it will be temp. stored locally
+                    ss(socket).emit('stream-transcribe', stream, {
+                        name: 'stream.wav', 
+                        size: blob.size
+                    });
+                    // pipe the audio blob to the read stream
+                    ss.createBlobReadStream(blob).pipe(stream);
+                }
+            });
+
+            recordAudio.startRecording();
+            stopRecording.disabled = false;
+        }, function(error) {
+            console.error(JSON.stringify(error));
+        });
+    };
+
+    // 4)
+    // on stop button handler
+    stopRecording.onclick = function() {
+        // recording stopped
+        recordAudio.stopRecording();
+        startRecording.disabled = false;
+        stopRecording.disabled = true;
+    };
+
+    // when the server found results and send
+    // it back to the client    
+    const resultpreview = document.getElementById('results');
+    socketio.on('results', function (data) {
+        console.log("Raw Transcript in Bengali: ", data);
+        if(data){
+            resultpreview.innerHTML += " \n" + data;
+        }
+    });
+
+    const translatedpreview = document.getElementById('translated');
+    socketio.on('translated', function (data) {
+        console.log("Transcript in English: ", data);
+        if(data[0]){
+            translatedpreview.innerHTML += " \n" + data[0];
+        }
+    });
+    </script>
+</body>
+</html>
